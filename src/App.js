@@ -3,12 +3,17 @@ import { useState } from 'react';
 import GoblinForm from './GoblinForm';
 import GoblinList from './GoblinList';
 import Goblin from './Goblin';
+import { useEffect } from 'react';
 
 function App() {
   const [goblinFormName, setGoblinFormName] = useState('');
   const [goblinFormHP, setGoblinFormHP] = useState('');
   const [goblinFormColor, setGoblinFormColor] = useState('pink');
   const [allGoblins, setAllGoblins] = useState([]);
+  const [filterQuery, setFilterQuery] = useState('');
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => handleFilterGoblins(filterQuery), [filterQuery]);
 
   const [filteredGoblins, setAllFilteredGoblins] = useState(allGoblins);
   /* 
@@ -47,7 +52,7 @@ function App() {
     // find the index of the goblin in allGoblins with this name
     allGoblins.splice(goblinIndex, 1);
     // use splice to delete the goblin object at this index
-    setAllGoblins([...allGoblins]);
+    setAllFilteredGoblins([...allGoblins]);
     // update the allGoblins array immutably to this new, smaller array
   }
 
@@ -77,7 +82,7 @@ function App() {
       <div className="goblin-filter quarter">
         Filter Goblins
         {/* note that handleFilterGoblins is defined upstairs. This is where the allGoblins array gets filtered */}
-        <input onChange={(e) => handleFilterGoblins(e.target.value)} />
+        <input onChange={(e) => setFilterQuery(e.target.value)} />
       </div>
       <GoblinForm
         submitGoblin={submitGoblin}
@@ -90,7 +95,7 @@ function App() {
       />
 
       <GoblinList
-        goblins={filteredGoblins || allGoblins} // this takes in an array of goblins. If the filteredGoblins has a length, use that array. Otherwise, use the allGoblins array
+        goblins={filterQuery ? filteredGoblins : allGoblins} // this takes in an array of goblins. If the filteredGoblins has a length, use that array. Otherwise, use the allGoblins array
         handleDeleteGoblin={handleDeleteGoblin} // note that the goblin list has access to the ability to delete
       />
     </div>
